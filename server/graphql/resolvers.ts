@@ -1,48 +1,67 @@
 import axiosBase from 'axios';
-import { PrefectureResponse } from '../../types/resas/prefecture-response';
-import { PopulationResponse } from '../../types/resas/population-response';
-import { IResolvers } from 'apollo-server-express';
+import {
+    PrefectureResponse,
+    Prefecture,
+    PopulationResponse,
+    PopulationCompositionPerYear
+} from '../types/resas/index';
 
 const axios = axiosBase.create({
     baseURL: 'https://opendata.resas-portal.go.jp/api/v1',
     headers: {
-      'Content-Type': 'application/json',
-      'X-Requested-With': 'XMLHttpRequest',
-      'X-API-KEY': '9L7B8Z9TxVwbnPF8t1MEGOI5AAQmHh2pMQNfb1n8'
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-API-KEY': '9L7B8Z9TxVwbnPF8t1MEGOI5AAQmHh2pMQNfb1n8'
     },
     responseType: 'json'
-  });
+});
 
-const resolvers: IResolvers = {
-    Query: {
-        allPrefectures: async () => getPrefectureList(),
-        populationComposition: async (parent: any, args: any) => getPopulationComposition(parent, args)
-    }
-}
-
-async function getPrefectureList() {
-    console.log("getPrefectureList")
-    const response = await axios.get<PrefectureResponse>('/prefectures')
+async function getPrefectureList(): Promise<Prefecture[]> {
+    const response = await axios
+        .get<PrefectureResponse>('/prefectures')
         .then((response) => {
-            console.log(response.data)
-            return response.data;
+            return response.data.result;
         });
     return response;
 }
 
-async function getPopulationComposition(parent: any, args: any) {
-    console.log("getPopulationComposition")
-    for(let arg in args) {
-        console.log(arg + ": " + args[arg])
-    }
+async function getPopulationComposition(
+    _parent: any,
+    args: any
+): Promise<PopulationCompositionPerYear[]> {
     const prefCode = args.prefCode;
-    const response = await axios.get<PopulationResponse>('/population/composition/perYear'
-    + '?prefCode=' + prefCode + '&cityCode=-')
+    const targetLabel = args.targetLabel;
+    const response = await axios
+        .get<PopulationResponse>(
+            '/population/composition/perYear' +
+                '?prefCode=' +
+                prefCode +
+                '&cityCode=-'
+        )
         .then((response) => {
-            console.log(response.data)
-            return response.data
+            // パラメータのラベルと同一の人口データを取得
+            const targetData =
+                response.data.result.data.find(
+                    (data) => data.label === targetLabel
+                ) || null;
+            // TSLintがうるさいので非nullアサーション演算子で回避
+            const populationList = targetData!.data;
+            // 人口数データ
+            // １９８０年から１０年単位で取得
+            const result = populationList.filter((data) => {
+                return data.year >= 1980 && data.year % 10 === 0;
+            });
+            return result;
         });
     return response;
 }
+
+const resolvers = {
+    Query: {
+        prefectures: () => getPrefectureList(),
+        populationComposition: (parent: any, args: any) =>
+            getPopulationComposition(parent, args)
+    }
+};
 
 export default resolvers;

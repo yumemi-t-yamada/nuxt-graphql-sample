@@ -26,9 +26,9 @@
     },
     "types": [
       "@types/node",
-      "@nuxt/types",
-      "@nuxtjs/vuetify"
+      "@nuxtjs/vuetify",
+      "@nuxt/types"
     ]
   },
-  "exclude": ["./node_modules/*", "./server/*"]
+  "exclude": ["node_modules"]
 }

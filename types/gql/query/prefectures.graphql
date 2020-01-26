@@ -1,0 +1,6 @@
+query prefectures {
+    prefectures {
+        prefCode
+        prefName
+    }
+}

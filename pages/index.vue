@@ -69,7 +69,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator';
+import { Component } from 'nuxt-property-decorator';
+import VueBase from '~/common/vue-base';
 import Logo from '~/components/Logo.vue';
 import VuetifyLogo from '~/components/VuetifyLogo.vue';
 
@@ -79,5 +80,5 @@ import VuetifyLogo from '~/components/VuetifyLogo.vue';
         VuetifyLogo
     }
 })
-export default class Index extends Vue {}
+export default class Index extends VueBase {}
 </script>

@@ -1,39 +1,27 @@
 import { gql } from 'apollo-server-express';
 
 export const typeDefs = gql`
-type Query {
-    allPrefectures: PrefectureResponse
-    populationComposition(prefCode: Int!): PopulationResponse
-}
+    type Query {
+        prefectures: [Prefecture!]!
+        populationComposition(
+            prefCode: Int!
+            targetLabel: String!
+        ): [PopulationCompositionPerYear!]!
+    }
 
-type PrefectureResponse {
-    message: String,
-    result: [Prefecture]
-}
+    type Prefecture {
+        prefCode: Int!
+        prefName: String!
+    }
 
-type PopulationResponse {
-    message: String,
-    result: PopulationResult
-}
+    type Population {
+        label: String!
+        data: [PopulationCompositionPerYear!]!
+    }
 
-type PopulationResult {
-    boundaryYear: Int,
-    data: [Population]
-}
-
-type Prefecture {
-    prefCode: String,
-    prefName: String
-}
-
-type Population {
-    label: String,
-    data: [PopulationData]
-}
-
-type PopulationData {
-    year: Int,
-    value: Int
-}
+    type PopulationCompositionPerYear {
+        year: Int!
+        value: Int!
+    }
 `;
 export default typeDefs;

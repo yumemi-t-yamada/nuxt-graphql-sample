@@ -20,8 +20,9 @@
 }
 </style>
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator';
+import { Component } from 'nuxt-property-decorator';
+import VueBase from '~/common/vue-base';
 
 @Component
-export default class VuetifyLogo extends Vue {}
+export default class VuetifyLogo extends VueBase {}
 </script>

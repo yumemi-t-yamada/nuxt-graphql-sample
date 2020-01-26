@@ -15,8 +15,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator';
+import { Component } from 'nuxt-property-decorator';
+import VueBase from '~/common/vue-base';
 
 @Component
-export default class Inspire extends Vue {}
+export default class Inspire extends VueBase {}
 </script>

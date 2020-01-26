@@ -1,0 +1,6 @@
+query populationComposition($prefCode: Int!, $targetLabel: String!) {
+    populationComposition(prefCode: $prefCode, targetLabel: $targetLabel) {
+        year
+        value
+    }
+}
